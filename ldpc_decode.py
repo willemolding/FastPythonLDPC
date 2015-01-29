@@ -70,11 +70,11 @@ def ldpc_decode(f0, f1, H, max_iter):
     ii, jj = H.nonzero()
 
     q0 = H.dot(sparse.spdiags(f0, 0, n, n, 'csc'))
-    sq0 = np.array(q0[ii, jj])
+    sq0 = q0[ii, jj].getA1()
     sff0 = sq0
 
     q1 = H.dot(sparse.spdiags(f1, 0, n, n, 'csc'))
-    sq1 = np.array(q1[ii, jj])
+    sq1 = q1[ii, jj].getA1()
     sff1 = sq1
 
     # iterations
@@ -86,28 +86,28 @@ def ldpc_decode(f0, f1, H, max_iter):
         # horizontal step
         sdq = sq0 - sq1
         sdq[sdq == 0] = 1e-20  # if   f0 = f1 = .5
-        dq = sparse.csc_matrix((np.squeeze(sdq), (ii, jj)), shape=(m, n))
+        dq = sparse.csc_matrix((sdq, (ii, jj)), shape=(m, n))
 
         dq.data = np.log(dq.data.astype(np.complex))
         Pdq_v = np.real(np.exp(dq.sum(axis=1)))
 
         Pdq = sparse.spdiags(Pdq_v.ravel(), 0, m, m, 'csc').dot(H)
-        sPdq = np.array(Pdq[ii, jj])
+        sPdq = Pdq[ii, jj].getA1()
 
         sr0 = (1 + sPdq / sdq) / 2.
         sr0[abs(sr0) < 1e-20] = 1e-20
         sr1 = (1 - sPdq / sdq) / 2.
         sr1[np.abs(sr1) < 1e-20] = 1e-20
-        r0 = sparse.csc_matrix((np.squeeze(sr0), (ii, jj)), shape=(m, n))
-        r1 = sparse.csc_matrix((np.squeeze(sr1), (ii, jj)), shape=(m, n))
+        r0 = sparse.csc_matrix((sr0, (ii, jj)), shape=(m, n))
+        r1 = sparse.csc_matrix((sr1, (ii, jj)), shape=(m, n))
 
         # vertical step
         r0.data = np.log(r0.data.astype(np.complex))
         Pr0_v = np.real(np.exp(dq.sum(axis=0)))
 
         Pr0 = H.dot(sparse.spdiags(Pr0_v.ravel(), 0, n, n, 'csc'))
-        sPr0 = np.array(Pr0[ii, jj])
-        Q0 = np.array(sparse.csc_matrix((np.squeeze(sPr0 * sff0), (ii, jj)), shape=(m, n)).sum(axis=0)).T
+        sPr0 = Pr0[ii, jj].getA1()
+        Q0 = np.array(sparse.csc_matrix((sPr0 * sff0, (ii, jj)), shape=(m, n)).sum(axis=0)).T
 
         sq0 = sPr0 * sff0 / sr0
 
@@ -115,9 +115,9 @@ def ldpc_decode(f0, f1, H, max_iter):
         Pr1_v = np.real(np.exp(r1.sum(axis=0)))
 
         Pr1 = H.dot(sparse.spdiags(Pr1_v.ravel(), 0, n, n, 'csc'))
-        sPr1 = np.array(Pr1[ii, jj])
+        sPr1 = Pr1[ii, jj].getA1()
 
-        Q1 = np.array(sparse.csc_matrix((np.squeeze(sPr1 * sff1), (ii, jj)), shape=(m, n)).sum(axis=0)).T
+        Q1 = np.array(sparse.csc_matrix((sPr1 * sff1, (ii, jj)), shape=(m, n)).sum(axis=0)).T
         sq1 = sPr1 * sff1 / sr1
 
         sqq = sq0 + sq1
