@@ -31,8 +31,7 @@ cimport numpy as np
 
 from scipy import sparse
 
-#@profile
-def ldpc_decode(np.ndarray f0, np.ndarray f1, sparse.csc_matrix H, int max_iter):
+def ldpc_decode(np.ndarray[double, ndim=2] f0, np.ndarray[double, ndim=2] f1, H, int max_iter):
     """
     A python port of the ldpc_decode matlab code.
 
@@ -61,6 +60,10 @@ def ldpc_decode(np.ndarray f0, np.ndarray f1, sparse.csc_matrix H, int max_iter)
     cdef:
         int m,n,k
         char success
+        np.ndarray[int,ndim=1] ii,jj
+        np.ndarray[double, ndim=1] sPdq, sPr0, sPr1,sdq,sff0,sff1,sq0,sqq,sr0,sr1
+        np.ndarray[double, ndim=2] Q0,Q1,QQ,tent,x_hat
+
 
     # check the matrix is correctly orientated and transpose it if required
     [m, n] = H.shape
