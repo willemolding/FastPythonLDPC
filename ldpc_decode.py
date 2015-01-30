@@ -103,7 +103,7 @@ def ldpc_decode(f0, f1, H, max_iter):
 
         # vertical step
         r0.data = np.log(r0.data.astype(np.complex))
-        Pr0_v = np.real(np.exp(dq.sum(axis=0)))
+        Pr0_v = np.real(np.exp(r0.sum(axis=0)))
 
         Pr0 = H.dot(sparse.spdiags(Pr0_v.ravel(), 0, n, n, 'csc'))
         sPr0 = Pr0[ii, jj].getA1()
@@ -133,7 +133,7 @@ def ldpc_decode(f0, f1, H, max_iter):
         tent = (Q1 - Q0)  # soft?
         x_hat = (np.sign(tent) + 1) / 2  # hard bits estimated
 
-        if np.all(np.fmod(H.dot(x_hat), 2)) == 0:
+        if np.all(np.fmod(H.dot(x_hat), 2) == 0):
             success = 1
 
     return x_hat, success, k

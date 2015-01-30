@@ -21,7 +21,7 @@ def run_test():
     f0[f0 == 0.5] = 0.5 - 1e-20
 
     t0 = time.time()
-    for i in range(1000):
+    for i in range(10):
         z_hat, success, k = ldpc_decode(f0, f1, H, 100)
     t1 = time.time()
 
@@ -29,8 +29,10 @@ def run_test():
     b = x_hat.T
 
     nErrors = np.sum(x != b)
-    print nErrors
+    print "n_errors", nErrors
     print "completed in ", t1-t0, "seconds"
+    print 'iterations', k
+    print 'success', success
 
 if __name__ == "__main__":
     run_test()

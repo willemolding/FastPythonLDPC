@@ -9,7 +9,7 @@ f0(f0==0.5) = 0.5-1e-20;
 
 %decode conventionally
 tic
-for i = 1:1000 
+for i = 1:10 
     [z_hat, success, k] = ldpc_decode(f0,f1,full(H),100);
 end
 toc
@@ -17,3 +17,5 @@ x_hat = z_hat(size(G,2)+1-size(G,1):size(G,2));
 b = x_hat';
 
 nErrors = sum(x ~= b)
+k
+success
