@@ -97,7 +97,6 @@ def ldpc_decode(np.ndarray[double, ndim=2] f0, np.ndarray[double, ndim=2] f1, H,
         sdq[sdq == 0] = 1e-20  # if   f0 = f1 = .5
         dq = sparse.csc_matrix((sdq, (ii, jj)), shape=(m, n))
 
-
         dq.data = np.log(dq.data.astype(np.complex)) ## takes 35% of function execution time!!
         Pdq_v = np.real(np.exp(dq.sum(axis=1)))
 
