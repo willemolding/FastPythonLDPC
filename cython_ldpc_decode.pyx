@@ -27,10 +27,12 @@
 #   fixed high-SNR decoding
 
 import numpy as np
+cimport numpy as np
+
 from scipy import sparse
 
 #@profile
-def ldpc_decode(f0, f1, H, max_iter):
+def ldpc_decode(np.ndarray f0, np.ndarray f1, sparse.csc_matrix H, int max_iter):
     """
     A python port of the ldpc_decode matlab code.
 
@@ -55,6 +57,10 @@ def ldpc_decode(f0, f1, H, max_iter):
         number of iterations to converge
     prob :
     """
+
+    cdef:
+        int m,n,k
+        char success
 
     # check the matrix is correctly orientated and transpose it if required
     [m, n] = H.shape

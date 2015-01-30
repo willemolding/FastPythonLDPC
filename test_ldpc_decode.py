@@ -3,7 +3,7 @@ __author__ = 'willemolding'
 from scipy import sparse, io
 import numpy as np
 import time
-from ldpc_decode import ldpc_decode
+from cython_ldpc_decode import ldpc_decode
 
 def run_test():
 
